@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚛 Trucking Daily Pay Calculator</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 15px; background: #f4f4f4; line-height: 1.5; }
+        h1 { color: #1a3c5e; }
+        label { display: block; margin-top: 12px; font-weight: bold; }
+        input { padding: 10px; width: 100%; max-width: 400px; font-size: 16px; box-sizing: border-box; }
+        button { padding: 12px 24px; font-size: 18px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer; margin: 10px 5px; }
+        button:hover { background: #219653; }
+        .total { font-size: 1.6em; font-weight: bold; color: #2c3e50; margin: 20px 0; }
+        .note { font-size: 0.9em; color: #666; }
+    </style>
+</head>
+<body>
+    <h1>🚛 Daily Trucking Pay Calculator</h1>
+    <p>Enter your activities for the day</p>
+
+    <label>Miles Driven ($0.6415/mi)</label>
+    <input type="number" id="miles" value="0" step="0.1">
+
+    <label>Layovers ($42 each)</label>
+    <input type="number" id="layover" value="0" step="1" min="0">
+
+    <label>Hooks ($10 each)</label>
+    <input type="number" id="hook" value="0" step="1" min="0">
+
+    <label>Stops ($12.75 each)</label>
+    <input type="number" id="stop" value="0" step="1" min="0">
+
+    <label>Live Loads ($12.75 each)</label>
+    <input type="number" id="liveLoad" value="0" step="1" min="0">
+
+    <label>Live Unloads ($12.75 each)</label>
+    <input type="number" id="liveUnload" value="0" step="1" min="0">
+
+    <label>Arrives ($12.75 each)</label>
+    <input type="number" id="arrive" value="0" step="1" min="0">
+
+    <label>Arrive Drops ($12.75 each)</label>
+    <input type="number" id="arriveDrop" value="0" step="1" min="0">
+
+    <label>Wait Minutes</label>
+    <input type="number" id="waitMinutes" value="0" step="1" min="0">
+    <p class="note">$17/hr only after first 45 minutes</p>
+
+    <button onclick="calculatePay()">Calculate Pay</button>
+
+    <div class="total" id="totalDisplay">Total Pay: $0.00</div>
+    <div id="breakdown"></div>
+
+    <script>
+        function calculatePay() {
+            const miles = parseFloat(document.getElementById('miles').value) || 0;
+            const layover = parseFloat(document.getElementById('layover').value) || 0;
+            const hook = parseFloat(document.getElementById('hook').value) || 0;
+            const stop = parseFloat(document.getElementById('stop').value) || 0;
+            const liveLoad = parseFloat(document.getElementById('liveLoad').value) || 0;
+            const liveUnload = parseFloat(document.getElementById('liveUnload').value) || 0;
+            const arrive = parseFloat(document.getElementById('arrive').value) || 0;
+            const arriveDrop = parseFloat(document.getElementById('arriveDrop').value) || 0;
+            const waitMinutes = parseFloat(document.getElementById('waitMinutes').value) || 0;
+
+            const mileagePay = miles * 0.6415;
+            const layoverPay = layover * 42;
+            const hookPay = hook * 10;
+            const stopPay = stop * 12.75;
+            const liveLoadPay = liveLoad * 12.75;
+            const liveUnloadPay = liveUnload * 12.75;
+            const arrivePay = arrive * 12.75;
+            const arriveDropPay = arriveDrop * 12.75;
+
+            let waitPay = 0;
+            if (waitMinutes > 45) {
+                waitPay = ((waitMinutes - 45) / 60) * 17;
+            }
+
+            const total = mileagePay + layoverPay + hookPay + stopPay + liveLoadPay + 
+                         liveUnloadPay + arrivePay + arriveDropPay + waitPay;
+
+            document.getElementById('totalDisplay').textContent = `Total Pay: $${total.toFixed(2)}`;
+
+            let html = `<strong>Breakdown:</strong><br>`;
+            html += `Mileage: ${miles} mi → $${mileagePay.toFixed(2)}<br>`;
+            html += `Layovers: ${layover} → $${layoverPay.toFixed(2)}<br>`;
+            html += `Hooks: ${hook} → $${hookPay.toFixed(2)}<br>`;
+            html += `Stops: ${stop} → $${stopPay.toFixed(2)}<br>`;
+            html += `Live Loads: ${liveLoad} → $${liveLoadPay.toFixed(2)}<br>`;
+            html += `Live Unloads: ${liveUnload} → $${liveUnloadPay.toFixed(2)}<br>`;
+            html += `Arrives: ${arrive} → $${arrivePay.toFixed(2)}<br>`;
+            html += `Arrive Drops: ${arriveDrop} → $${arriveDropPay.toFixed(2)}<br>`;
+            if (waitMinutes > 45) html += `Wait Time: $${waitPay.toFixed(2)}<br>`;
+
+            document.getElementById('breakdown').innerHTML = html;
+        }
+
+        // Auto calculate as you type
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', calculatePay);
+        });
+
+        calculatePay(); // Initial load
+    </script>
+</body>
+</html>
